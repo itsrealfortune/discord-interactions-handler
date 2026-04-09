@@ -1,16 +1,16 @@
 import { EventEmitter } from "events";
 import type { Context } from "hono";
 import type {
-    AutocompleteInteractionLike,
-    ButtonInteractionLike,
-    CommandInteractionLike,
-    InteractionEventListener,
-    InteractionEventMap,
-    InteractionEventName,
-    InteractionLike,
-    MessageComponentInteractionLike,
-    ModalSubmitInteractionLike,
-    SelectMenuInteractionLike,
+  AutocompleteInteractionLike,
+  ButtonInteractionLike,
+  CommandInteractionLike,
+  InteractionEventListener,
+  InteractionEventMap,
+  InteractionEventName,
+  InteractionLike,
+  MessageComponentInteractionLike,
+  ModalSubmitInteractionLike,
+  SelectMenuInteractionLike,
 } from "./types/interaction";
 
 /**
