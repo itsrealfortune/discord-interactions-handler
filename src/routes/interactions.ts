@@ -1,26 +1,34 @@
-import { InteractionType } from 'discord.js';
-import { type Context } from 'hono';
-import type { InteractionHandler } from '../handler';
-import type { RawInteraction } from '../types/interaction';
-import { verifySignature } from '../utils/discordUtils';
-import { createInteractionFacade } from '../utils/interactionFacade';
+import { InteractionType } from "discord.js";
+import { type Context } from "hono";
+import type { InteractionHandler } from "../handler";
+import type { RawInteraction } from "../types/interaction";
+import { verifySignature } from "../utils/discordUtils";
+import { createInteractionFacade } from "../utils/interactionFacade";
 
-export async function handleInteractions(c: Context, emitter: InteractionHandler) {
+export async function handleInteractions(
+  c: Context,
+  emitter: InteractionHandler,
+) {
   const body = await c.req.text();
   const isVerified = await verifySignature(c, body);
   if (!isVerified) {
-    return c.text('Invalid signature', 401);
+    return c.text("Invalid signature", 401);
   }
 
   let rawInteraction: Record<string, unknown>;
   try {
     rawInteraction = JSON.parse(body) as Record<string, unknown>;
   } catch {
-    return c.text('Invalid JSON payload', 400);
+    return c.text("Invalid JSON payload", 400);
   }
 
-  if (!rawInteraction || typeof rawInteraction !== 'object' || Array.isArray(rawInteraction) || typeof rawInteraction.type !== 'number') {
-    return c.text('Invalid interaction payload', 400);
+  if (
+    !rawInteraction ||
+    typeof rawInteraction !== "object" ||
+    Array.isArray(rawInteraction) ||
+    typeof rawInteraction.type !== "number"
+  ) {
+    return c.text("Invalid interaction payload", 400);
   }
 
   const type = rawInteraction.type as InteractionType;
@@ -35,7 +43,9 @@ export async function handleInteractions(c: Context, emitter: InteractionHandler
     if (interaction.isAutocomplete()) {
       await emitter.emitAutocomplete(interaction);
     }
-    return c.json(interaction.getResponse() ?? { type: 8, data: { choices: [] } });
+    return c.json(
+      interaction.getResponse() ?? { type: 8, data: { choices: [] } },
+    );
   }
 
   if (type === InteractionType.ApplicationCommand) {
@@ -68,5 +78,5 @@ export async function handleInteractions(c: Context, emitter: InteractionHandler
     return c.json(interaction.getResponse() ?? { type: 5 });
   }
 
-  return c.json({ error: 'Unknown interaction' }, 400);
+  return c.json({ error: "Unknown interaction" }, 400);
 }

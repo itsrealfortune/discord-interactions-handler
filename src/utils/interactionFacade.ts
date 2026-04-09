@@ -1,34 +1,34 @@
 import {
-    ApplicationCommandType,
-    ComponentType,
-    InteractionType
-} from 'discord.js';
+  ApplicationCommandType,
+  ComponentType,
+  InteractionType,
+} from "discord.js";
 import type {
-    AutocompleteInteractionLike,
-    ButtonInteractionLike,
-    ChannelSelectMenuInteractionLike,
-    ChatInputCommandLike,
-    CommandInteractionLike,
-    ContextMenuCommandLike,
-    InteractionCallbackResponse,
-    InteractionLike,
-    MentionableSelectMenuInteractionLike,
-    MessageComponentInteractionLike,
-    MessageContextMenuCommandLike,
-    ModalSubmitInteractionLike,
-    RawInteraction,
-    RoleSelectMenuInteractionLike,
-    SelectComponentType,
-    SelectMenuInteractionLike,
-    StringSelectMenuInteractionLike,
-    UnknownRecord,
-    UserContextMenuCommandLike,
-    UserSelectMenuInteractionLike
-} from '../types/interaction';
+  AutocompleteInteractionLike,
+  ButtonInteractionLike,
+  ChannelSelectMenuInteractionLike,
+  ChatInputCommandLike,
+  CommandInteractionLike,
+  ContextMenuCommandLike,
+  InteractionCallbackResponse,
+  InteractionLike,
+  MentionableSelectMenuInteractionLike,
+  MessageComponentInteractionLike,
+  MessageContextMenuCommandLike,
+  ModalSubmitInteractionLike,
+  RawInteraction,
+  RoleSelectMenuInteractionLike,
+  SelectComponentType,
+  SelectMenuInteractionLike,
+  StringSelectMenuInteractionLike,
+  UnknownRecord,
+  UserContextMenuCommandLike,
+  UserSelectMenuInteractionLike,
+} from "../types/interaction";
 
-  /** Normalize message payload inputs into Discord callback data shape. */
+/** Normalize message payload inputs into Discord callback data shape. */
 function toDataPayload(payload: string | UnknownRecord): UnknownRecord {
-  if (typeof payload === 'string') {
+  if (typeof payload === "string") {
     return { content: payload };
   }
   return payload;
@@ -36,14 +36,16 @@ function toDataPayload(payload: string | UnknownRecord): UnknownRecord {
 
 /** Check whether response flags contain the ephemeral bit (64). */
 function isEphemeralFromFlags(flags: unknown): boolean {
-  if (typeof flags === 'number') {
+  if (typeof flags === "number") {
     return (flags & 64) === 64;
   }
   return false;
 }
 
 /** Runtime guard for supported select menu component types. */
-function isSelectComponentType(componentType: unknown): componentType is SelectComponentType {
+function isSelectComponentType(
+  componentType: unknown,
+): componentType is SelectComponentType {
   return (
     componentType === ComponentType.StringSelect ||
     componentType === ComponentType.UserSelect ||
@@ -58,7 +60,9 @@ function isSelectComponentType(componentType: unknown): componentType is SelectC
  *
  * Returns null when the id is absent or malformed.
  */
-function parseSnowflakeTimestamp(interactionId: string | undefined): number | null {
+function parseSnowflakeTimestamp(
+  interactionId: string | undefined,
+): number | null {
   if (!interactionId) {
     return null;
   }
@@ -75,11 +79,21 @@ function parseSnowflakeTimestamp(interactionId: string | undefined): number | nu
 /** Resolve the triggering user id from either guild member.user or user. */
 function getUserId(raw: RawInteraction): string | null {
   const memberUser = raw.member?.user;
-  if (memberUser && typeof memberUser === 'object' && 'id' in memberUser && typeof memberUser.id === 'string') {
+  if (
+    memberUser &&
+    typeof memberUser === "object" &&
+    "id" in memberUser &&
+    typeof memberUser.id === "string"
+  ) {
     return memberUser.id;
   }
 
-  if (raw.user && typeof raw.user === 'object' && 'id' in raw.user && typeof raw.user.id === 'string') {
+  if (
+    raw.user &&
+    typeof raw.user === "object" &&
+    "id" in raw.user &&
+    typeof raw.user.id === "string"
+  ) {
     return raw.user.id;
   }
 
@@ -101,10 +115,18 @@ export function createInteractionFacade(raw: RawInteraction): InteractionLike {
     channelId: raw.channel_id ?? null,
     applicationId: raw.application_id ?? null,
     userId: getUserId(raw),
-    commandName: typeof raw.data?.name === 'string' ? raw.data.name : null,
-    customId: typeof raw.data?.custom_id === 'string' ? raw.data.custom_id : null,
-    componentType: typeof raw.data?.component_type === 'number' ? raw.data.component_type : null,
-    values: Array.isArray(raw.data?.values) ? raw.data.values.filter((value): value is string => typeof value === 'string') : [],
+    commandName: typeof raw.data?.name === "string" ? raw.data.name : null,
+    customId:
+      typeof raw.data?.custom_id === "string" ? raw.data.custom_id : null,
+    componentType:
+      typeof raw.data?.component_type === "number"
+        ? raw.data.component_type
+        : null,
+    values: Array.isArray(raw.data?.values)
+      ? raw.data.values.filter(
+          (value): value is string => typeof value === "string",
+        )
+      : [],
     createdTimestamp: parseSnowflakeTimestamp(raw.id),
     createdAt: (() => {
       const timestamp = parseSnowflakeTimestamp(raw.id);
@@ -128,46 +150,80 @@ export function createInteractionFacade(raw: RawInteraction): InteractionLike {
       return raw.type === InteractionType.ApplicationCommandAutocomplete;
     },
     isChatInputCommand(): this is ChatInputCommandLike {
-      return raw.type === InteractionType.ApplicationCommand && raw.data?.type === ApplicationCommandType.ChatInput;
+      return (
+        raw.type === InteractionType.ApplicationCommand &&
+        raw.data?.type === ApplicationCommandType.ChatInput
+      );
     },
     isContextMenuCommand(): this is ContextMenuCommandLike {
       return (
-      raw.type === InteractionType.ApplicationCommand &&
-        (raw.data?.type === ApplicationCommandType.User || raw.data?.type === ApplicationCommandType.Message)
+        raw.type === InteractionType.ApplicationCommand &&
+        (raw.data?.type === ApplicationCommandType.User ||
+          raw.data?.type === ApplicationCommandType.Message)
       );
     },
     isUserContextMenuCommand(): this is UserContextMenuCommandLike {
-      return raw.type === InteractionType.ApplicationCommand && raw.data?.type === ApplicationCommandType.User;
+      return (
+        raw.type === InteractionType.ApplicationCommand &&
+        raw.data?.type === ApplicationCommandType.User
+      );
     },
     isMessageContextMenuCommand(): this is MessageContextMenuCommandLike {
-      return raw.type === InteractionType.ApplicationCommand && raw.data?.type === ApplicationCommandType.Message;
+      return (
+        raw.type === InteractionType.ApplicationCommand &&
+        raw.data?.type === ApplicationCommandType.Message
+      );
     },
     isMessageComponent(): this is MessageComponentInteractionLike {
       return raw.type === InteractionType.MessageComponent;
     },
     isButton(): this is ButtonInteractionLike {
-      return raw.type === InteractionType.MessageComponent && raw.data?.component_type === ComponentType.Button;
+      return (
+        raw.type === InteractionType.MessageComponent &&
+        raw.data?.component_type === ComponentType.Button
+      );
     },
     isSelectMenu(): this is SelectMenuInteractionLike {
-      return raw.type === InteractionType.MessageComponent && isSelectComponentType(raw.data?.component_type);
+      return (
+        raw.type === InteractionType.MessageComponent &&
+        isSelectComponentType(raw.data?.component_type)
+      );
     },
     isAnySelectMenu(): this is SelectMenuInteractionLike {
-      return raw.type === InteractionType.MessageComponent && isSelectComponentType(raw.data?.component_type);
+      return (
+        raw.type === InteractionType.MessageComponent &&
+        isSelectComponentType(raw.data?.component_type)
+      );
     },
     isStringSelectMenu(): this is StringSelectMenuInteractionLike {
-      return raw.type === InteractionType.MessageComponent && raw.data?.component_type === ComponentType.StringSelect;
+      return (
+        raw.type === InteractionType.MessageComponent &&
+        raw.data?.component_type === ComponentType.StringSelect
+      );
     },
     isUserSelectMenu(): this is UserSelectMenuInteractionLike {
-      return raw.type === InteractionType.MessageComponent && raw.data?.component_type === ComponentType.UserSelect;
+      return (
+        raw.type === InteractionType.MessageComponent &&
+        raw.data?.component_type === ComponentType.UserSelect
+      );
     },
     isRoleSelectMenu(): this is RoleSelectMenuInteractionLike {
-      return raw.type === InteractionType.MessageComponent && raw.data?.component_type === ComponentType.RoleSelect;
+      return (
+        raw.type === InteractionType.MessageComponent &&
+        raw.data?.component_type === ComponentType.RoleSelect
+      );
     },
     isMentionableSelectMenu(): this is MentionableSelectMenuInteractionLike {
-      return raw.type === InteractionType.MessageComponent && raw.data?.component_type === ComponentType.MentionableSelect;
+      return (
+        raw.type === InteractionType.MessageComponent &&
+        raw.data?.component_type === ComponentType.MentionableSelect
+      );
     },
     isChannelSelectMenu(): this is ChannelSelectMenuInteractionLike {
-      return raw.type === InteractionType.MessageComponent && raw.data?.component_type === ComponentType.ChannelSelect;
+      return (
+        raw.type === InteractionType.MessageComponent &&
+        raw.data?.component_type === ComponentType.ChannelSelect
+      );
     },
     isModalSubmit(): this is ModalSubmitInteractionLike {
       return raw.type === InteractionType.ModalSubmit;
@@ -182,7 +238,8 @@ export function createInteractionFacade(raw: RawInteraction): InteractionLike {
       return response;
     },
     deferReply: async (options) => {
-      const isEphemeral = Boolean(options?.ephemeral) || isEphemeralFromFlags(options?.flags);
+      const isEphemeral =
+        Boolean(options?.ephemeral) || isEphemeralFromFlags(options?.flags);
       const data = isEphemeral ? { flags: 64 } : undefined;
       response = { type: 5, data };
       interaction.deferred = true;
@@ -196,12 +253,18 @@ export function createInteractionFacade(raw: RawInteraction): InteractionLike {
       return response;
     },
     update: async (payload) => {
-      response = { type: 7, data: toDataPayload(payload as string | UnknownRecord) };
+      response = {
+        type: 7,
+        data: toDataPayload(payload as string | UnknownRecord),
+      };
       interaction.replied = true;
       return response;
     },
     respond: async (choices) => {
-      response = { type: 8, data: { choices: choices as unknown as UnknownRecord[] } };
+      response = {
+        type: 8,
+        data: { choices: choices as unknown as UnknownRecord[] },
+      };
       interaction.replied = true;
       return response;
     },
@@ -212,12 +275,18 @@ export function createInteractionFacade(raw: RawInteraction): InteractionLike {
     },
     editReply: async (payload) => {
       const previousType = response?.type ?? 4;
-      response = { type: previousType, data: toDataPayload(payload as string | UnknownRecord) };
+      response = {
+        type: previousType,
+        data: toDataPayload(payload as string | UnknownRecord),
+      };
       interaction.replied = true;
       return response;
     },
     followUp: async (payload) => {
-      response = { type: 4, data: toDataPayload(payload as string | UnknownRecord) };
+      response = {
+        type: 4,
+        data: toDataPayload(payload as string | UnknownRecord),
+      };
       interaction.replied = true;
       return response;
     },
@@ -228,7 +297,7 @@ export function createInteractionFacade(raw: RawInteraction): InteractionLike {
       interaction.deferred = false;
       interaction.ephemeral = false;
     },
-    getResponse: () => response
+    getResponse: () => response,
   };
 
   return interaction;

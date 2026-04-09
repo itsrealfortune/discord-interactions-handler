@@ -1,22 +1,22 @@
 import {
-    ApplicationCommandType,
-    ComponentType,
-    InteractionType,
-    type ApplicationCommandOptionChoiceData,
-    type InteractionDeferReplyOptions,
-    type InteractionReplyOptions,
-    type InteractionUpdateOptions
-} from 'discord.js';
+  ApplicationCommandType,
+  ComponentType,
+  InteractionType,
+  type ApplicationCommandOptionChoiceData,
+  type InteractionDeferReplyOptions,
+  type InteractionReplyOptions,
+  type InteractionUpdateOptions,
+} from "discord.js";
 
-  /** Generic JSON-like object used for Discord payload fragments. */
+/** Generic JSON-like object used for Discord payload fragments. */
 export type UnknownRecord = Record<string, unknown>;
 
-  /**
-   * Partial shape of interaction.data from Discord webhooks.
-   *
-   * Only commonly used fields are explicitly modeled here.
-   * Unknown fields are preserved through the index signature.
-   */
+/**
+ * Partial shape of interaction.data from Discord webhooks.
+ *
+ * Only commonly used fields are explicitly modeled here.
+ * Unknown fields are preserved through the index signature.
+ */
 export type InteractionData = {
   type?: number;
   component_type?: number;
@@ -131,21 +131,33 @@ export interface InteractionLike extends RawInteraction {
   /** Type guard for modal submit interactions. */
   isModalSubmit: () => this is ModalSubmitInteractionLike;
   /** Build an immediate callback response (type 4). */
-  reply: (payload: string | InteractionReplyOptions) => Promise<InteractionCallbackResponse>;
+  reply: (
+    payload: string | InteractionReplyOptions,
+  ) => Promise<InteractionCallbackResponse>;
   /** Build a deferred callback response (type 5). */
-  deferReply: (options?: InteractionDeferReplyOptions) => Promise<InteractionCallbackResponse>;
+  deferReply: (
+    options?: InteractionDeferReplyOptions,
+  ) => Promise<InteractionCallbackResponse>;
   /** Build a deferred message update response (type 6). */
   deferUpdate: () => Promise<InteractionCallbackResponse>;
   /** Build an update message callback response (type 7). */
-  update: (payload: string | InteractionUpdateOptions) => Promise<InteractionCallbackResponse>;
+  update: (
+    payload: string | InteractionUpdateOptions,
+  ) => Promise<InteractionCallbackResponse>;
   /** Build an autocomplete callback response (type 8). */
-  respond: (choices: readonly ApplicationCommandOptionChoiceData[]) => Promise<InteractionCallbackResponse>;
+  respond: (
+    choices: readonly ApplicationCommandOptionChoiceData[],
+  ) => Promise<InteractionCallbackResponse>;
   /** Build a show modal callback response (type 9). */
   showModal: (payload: UnknownRecord) => Promise<InteractionCallbackResponse>;
   /** Edit the currently captured callback payload. */
-  editReply: (payload: string | InteractionReplyOptions) => Promise<InteractionCallbackResponse>;
+  editReply: (
+    payload: string | InteractionReplyOptions,
+  ) => Promise<InteractionCallbackResponse>;
   /** Replace captured callback payload as an additional message-like response. */
-  followUp: (payload: string | InteractionReplyOptions) => Promise<InteractionCallbackResponse>;
+  followUp: (
+    payload: string | InteractionReplyOptions,
+  ) => Promise<InteractionCallbackResponse>;
   /** Read currently captured response data. */
   fetchReply: () => Promise<UnknownRecord>;
   /** Reset captured interaction response state. */
@@ -171,7 +183,9 @@ export interface ChatInputCommandLike extends CommandInteractionLike {
 
 /** User/message context command interaction facade. */
 export interface ContextMenuCommandLike extends CommandInteractionLike {
-  data?: InteractionData & { type: ApplicationCommandType.Message | ApplicationCommandType.User };
+  data?: InteractionData & {
+    type: ApplicationCommandType.Message | ApplicationCommandType.User;
+  };
 }
 
 /** User context command interaction facade. */
@@ -249,4 +263,6 @@ export type InteractionEventMap = {
 /** Event names supported by InteractionHandler listeners. */
 export type InteractionEventName = keyof InteractionEventMap;
 /** Strongly typed listener signature for a given interaction event. */
-export type InteractionEventListener<E extends InteractionEventName> = (interaction: InteractionEventMap[E]) => void | Promise<void>;
+export type InteractionEventListener<E extends InteractionEventName> = (
+  interaction: InteractionEventMap[E],
+) => void | Promise<void>;
