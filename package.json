@@ -2,11 +2,23 @@
   "name": "discord-interactions-handler",
   "module": "index.ts",
   "type": "module",
-  "private": true,
+  "scripts": {
+    "check": "npx tsc --noEmit",
+    "test": "bun test tests",
+    "format": "npx prettier --write .",
+    "lint": "npx eslint . --ext .ts"
+  },
   "devDependencies": {
     "@types/bun": "latest"
   },
   "peerDependencies": {
     "typescript": "^5"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.102.1",
+    "discord-interactions": "^4.4.0",
+    "discord.js": "^14.26.2",
+    "dotenv": "^17.4.1",
+    "hono": "^4.12.12"
   }
 }
