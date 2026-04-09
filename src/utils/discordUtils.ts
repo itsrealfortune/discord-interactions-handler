@@ -1,9 +1,7 @@
 /** Utility functions for Discord interactions */
 
 import { verifyKey } from 'discord-interactions';
-import { config } from 'dotenv';
 import type { Context } from 'hono';
-config();
 
 export async function verifySignature(c: Context, body: string): Promise<boolean> {
   const signature = c.req.header('x-signature-ed25519');
