@@ -1,11 +1,27 @@
 {
   "name": "discord-interactions-handler",
   "version": "1.0.0",
+  "license": "MIT",
   "description": "A Discord interactions handler built with Bun and Hono. Useful for handling slash commands, buttons, and other interactions in a performant way for Interactions Endpoints URL bots.",
-  "main": "src/index.ts",
-  "module": "src/index.ts",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "type": "module",
   "scripts": {
+    "build": "npx tsup src/index.ts --format esm --dts --clean",
+    "prepack": "npm run build",
     "check": "npx tsc --noEmit",
     "test": "bun test tests",
     "format": "npx prettier --write .",
@@ -17,6 +33,7 @@
     "eslint": "^10.2.0",
     "globals": "^17.4.0",
     "jiti": "^2.6.1",
+    "tsup": "^8.5.1",
     "typescript-eslint": "^8.58.1"
   },
   "peerDependencies": {
