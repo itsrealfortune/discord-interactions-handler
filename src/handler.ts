@@ -1,16 +1,16 @@
 import { EventEmitter } from "events";
 import type { Context } from "hono";
 import type {
-  AutocompleteInteractionLike,
-  ButtonInteractionLike,
-  CommandInteractionLike,
-  InteractionEventListener,
-  InteractionEventMap,
-  InteractionEventName,
-  InteractionLike,
-  MessageComponentInteractionLike,
-  ModalSubmitInteractionLike,
-  SelectMenuInteractionLike,
+    AutocompleteInteractionLike,
+    ButtonInteractionLike,
+    CommandInteractionLike,
+    InteractionEventListener,
+    InteractionEventMap,
+    InteractionEventName,
+    InteractionLike,
+    MessageComponentInteractionLike,
+    ModalSubmitInteractionLike,
+    SelectMenuInteractionLike,
 } from "./types/interaction";
 
 /**
@@ -31,7 +31,7 @@ export class InteractionHandler extends EventEmitter {
   ): this;
   override on(
     event: string | symbol,
-    listener: (...args: any[]) => void,
+    listener: (...args: unknown[]) => void,
   ): this {
     return super.on(event, listener);
   }
@@ -43,7 +43,7 @@ export class InteractionHandler extends EventEmitter {
   ): this;
   override once(
     event: string | symbol,
-    listener: (...args: any[]) => void,
+    listener: (...args: unknown[]) => void,
   ): this {
     return super.once(event, listener);
   }
@@ -55,7 +55,7 @@ export class InteractionHandler extends EventEmitter {
   ): this;
   override off(
     event: string | symbol,
-    listener: (...args: any[]) => void,
+    listener: (...args: unknown[]) => void,
   ): this {
     return super.off(event, listener);
   }
