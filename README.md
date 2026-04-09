@@ -1,5 +1,10 @@
 # discord-interactions-handler
 
+> [!WARNING]
+> This package is currently under active development.
+> Breaking changes can happen at any time, including API changes and behavior changes.
+> Do not rely on this package in production without pinning an exact version and testing each update.
+
 TypeScript handler for Discord Interactions Endpoint URL bots, built with Hono.
 
 It provides:
