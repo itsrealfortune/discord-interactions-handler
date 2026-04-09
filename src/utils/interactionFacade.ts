@@ -26,6 +26,7 @@ import type {
     UserSelectMenuInteractionLike
 } from '../types/interaction';
 
+  /** Normalize message payload inputs into Discord callback data shape. */
 function toDataPayload(payload: string | UnknownRecord): UnknownRecord {
   if (typeof payload === 'string') {
     return { content: payload };
@@ -33,6 +34,7 @@ function toDataPayload(payload: string | UnknownRecord): UnknownRecord {
   return payload;
 }
 
+/** Check whether response flags contain the ephemeral bit (64). */
 function isEphemeralFromFlags(flags: unknown): boolean {
   if (typeof flags === 'number') {
     return (flags & 64) === 64;
@@ -40,6 +42,7 @@ function isEphemeralFromFlags(flags: unknown): boolean {
   return false;
 }
 
+/** Runtime guard for supported select menu component types. */
 function isSelectComponentType(componentType: unknown): componentType is SelectComponentType {
   return (
     componentType === ComponentType.StringSelect ||
@@ -50,6 +53,11 @@ function isSelectComponentType(componentType: unknown): componentType is SelectC
   );
 }
 
+/**
+ * Decode the timestamp from a Discord snowflake id.
+ *
+ * Returns null when the id is absent or malformed.
+ */
 function parseSnowflakeTimestamp(interactionId: string | undefined): number | null {
   if (!interactionId) {
     return null;
@@ -64,6 +72,7 @@ function parseSnowflakeTimestamp(interactionId: string | undefined): number | nu
   }
 }
 
+/** Resolve the triggering user id from either guild member.user or user. */
 function getUserId(raw: RawInteraction): string | null {
   const memberUser = raw.member?.user;
   if (memberUser && typeof memberUser === 'object' && 'id' in memberUser && typeof memberUser.id === 'string') {
@@ -77,6 +86,12 @@ function getUserId(raw: RawInteraction): string | null {
   return null;
 }
 
+/**
+ * Create a discord.js-like interaction facade from raw webhook payload.
+ *
+ * The returned object exposes commonly used type guards and response helpers
+ * so listener code can remain close to discord.js patterns.
+ */
 export function createInteractionFacade(raw: RawInteraction): InteractionLike {
   let response: InteractionCallbackResponse | null = null;
 
