@@ -2,7 +2,7 @@ import { InteractionType } from 'discord.js';
 import { type Context } from 'hono';
 import type { InteractionHandler } from '../handler';
 import { verifySignature } from '../utils/discordUtils';
-import { createInteractionFacade } from '../utils/interactionFacade';
+import { createInteractionFacade, type RawInteraction } from '../utils/interactionFacade';
 
 export async function handleInteractions(c: Context, emitter: InteractionHandler) {
   const body = await c.req.text();
@@ -11,35 +11,48 @@ export async function handleInteractions(c: Context, emitter: InteractionHandler
     return c.text('Invalid signature', 401);
   }
 
-  const rawInteraction = JSON.parse(body) as Record<string, unknown>;
+  let rawInteraction: Record<string, unknown>;
+  try {
+    rawInteraction = JSON.parse(body) as Record<string, unknown>;
+  } catch {
+    return c.text('Invalid JSON payload', 400);
+  }
+
   if (!rawInteraction || typeof rawInteraction !== 'object' || Array.isArray(rawInteraction) || typeof rawInteraction.type !== 'number') {
     return c.text('Invalid interaction payload', 400);
   }
 
   const type = rawInteraction.type as InteractionType;
-  const interaction = createInteractionFacade(rawInteraction as Parameters<typeof createInteractionFacade>[0]);
+  const interaction = createInteractionFacade(rawInteraction as RawInteraction);
 
   if (type === InteractionType.Ping) {
     return c.json({ type: 1 });
   }
 
   if (type === InteractionType.ApplicationCommandAutocomplete) {
+    await emitter.emitInteraction(interaction);
     await emitter.emitAutocomplete(interaction);
     return c.json(interaction.getResponse() ?? { type: 8, data: { choices: [] } });
   }
 
   if (type === InteractionType.ApplicationCommand) {
+    await emitter.emitInteraction(interaction);
     await emitter.emitSlashCommand(interaction);
     return c.json(interaction.getResponse() ?? { type: 5 });
   }
 
   if (type === InteractionType.MessageComponent) {
-    await emitter.emitButton(interaction);
+    await emitter.emitInteraction(interaction);
+    await emitter.emitMessageComponent(interaction);
+    if (interaction.isButton()) {
+      await emitter.emitButton(interaction);
+    }
     return c.json(interaction.getResponse() ?? { type: 6 });
   }
 
   if (type === InteractionType.ModalSubmit) {
     await emitter.emitInteraction(interaction);
+    await emitter.emitModalSubmit(interaction);
     return c.json(interaction.getResponse() ?? { type: 5 });
   }
 

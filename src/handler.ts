@@ -24,8 +24,16 @@ export class InteractionHandler extends EventEmitter {
         await this.emitAsync('button', interaction);
     }
 
+    async emitMessageComponent(interaction: InteractionLike) {
+        await this.emitAsync('messageComponent', interaction);
+    }
+
     async emitSlashCommand(interaction: InteractionLike) {
         await this.emitAsync('slashCommand', interaction);
+    }
+
+    async emitModalSubmit(interaction: InteractionLike) {
+        await this.emitAsync('modalSubmit', interaction);
     }
 
     reply(c: Context, response: Record<string, unknown>) {
