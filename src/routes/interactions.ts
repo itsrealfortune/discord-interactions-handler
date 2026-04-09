@@ -1,8 +1,9 @@
 import { InteractionType } from 'discord.js';
 import { type Context } from 'hono';
 import type { InteractionHandler } from '../handler';
+import type { RawInteraction } from '../types/interaction';
 import { verifySignature } from '../utils/discordUtils';
-import { createInteractionFacade, type RawInteraction } from '../utils/interactionFacade';
+import { createInteractionFacade } from '../utils/interactionFacade';
 
 export async function handleInteractions(c: Context, emitter: InteractionHandler) {
   const body = await c.req.text();
@@ -31,28 +32,39 @@ export async function handleInteractions(c: Context, emitter: InteractionHandler
 
   if (type === InteractionType.ApplicationCommandAutocomplete) {
     await emitter.emitInteraction(interaction);
-    await emitter.emitAutocomplete(interaction);
+    if (interaction.isAutocomplete()) {
+      await emitter.emitAutocomplete(interaction);
+    }
     return c.json(interaction.getResponse() ?? { type: 8, data: { choices: [] } });
   }
 
   if (type === InteractionType.ApplicationCommand) {
     await emitter.emitInteraction(interaction);
-    await emitter.emitSlashCommand(interaction);
+    if (interaction.isCommand()) {
+      await emitter.emitSlashCommand(interaction);
+    }
     return c.json(interaction.getResponse() ?? { type: 5 });
   }
 
   if (type === InteractionType.MessageComponent) {
     await emitter.emitInteraction(interaction);
-    await emitter.emitMessageComponent(interaction);
+    if (interaction.isMessageComponent()) {
+      await emitter.emitMessageComponent(interaction);
+    }
     if (interaction.isButton()) {
       await emitter.emitButton(interaction);
+    }
+    if (interaction.isAnySelectMenu()) {
+      await emitter.emitSelectMenu(interaction);
     }
     return c.json(interaction.getResponse() ?? { type: 6 });
   }
 
   if (type === InteractionType.ModalSubmit) {
     await emitter.emitInteraction(interaction);
-    await emitter.emitModalSubmit(interaction);
+    if (interaction.isModalSubmit()) {
+      await emitter.emitModalSubmit(interaction);
+    }
     return c.json(interaction.getResponse() ?? { type: 5 });
   }
 

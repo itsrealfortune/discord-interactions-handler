@@ -1,149 +1,30 @@
 import {
     ApplicationCommandType,
     ComponentType,
-    InteractionType,
-    type ApplicationCommandOptionChoiceData,
-    type InteractionDeferReplyOptions,
-    type InteractionReplyOptions,
-    type InteractionUpdateOptions
+    InteractionType
 } from 'discord.js';
-
-type UnknownRecord = Record<string, unknown>;
-
-type InteractionData = {
-  type?: number;
-  component_type?: number;
-  [key: string]: unknown;
-};
-
-export type RawInteraction = {
-  id?: string;
-  token?: string;
-  application_id?: string;
-  type: InteractionType;
-  guild_id?: string;
-  channel_id?: string;
-  member?: UnknownRecord;
-  user?: UnknownRecord;
-  locale?: string;
-  guild_locale?: string;
-  data?: InteractionData;
-  [key: string]: unknown;
-};
-
-export type InteractionCallbackResponse = {
-  type: number;
-  data?: UnknownRecord;
-};
-
-type SelectComponentType =
-  | ComponentType.StringSelect
-  | ComponentType.UserSelect
-  | ComponentType.RoleSelect
-  | ComponentType.MentionableSelect
-  | ComponentType.ChannelSelect;
-
-export interface InteractionLike extends RawInteraction {
-  guildId: string | null;
-  channelId: string | null;
-  applicationId: string | null;
-  replied: boolean;
-  deferred: boolean;
-  ephemeral: boolean;
-  isRepliable: () => boolean;
-  inGuild: () => boolean;
-  inCachedGuild: () => boolean;
-  inRawGuild: () => boolean;
-  isCommand: () => this is CommandInteractionLike;
-  isAutocomplete: () => this is AutocompleteInteractionLike;
-  isChatInputCommand: () => this is ChatInputCommandLike;
-  isContextMenuCommand: () => this is ContextMenuCommandLike;
-  isUserContextMenuCommand: () => this is UserContextMenuCommandLike;
-  isMessageContextMenuCommand: () => this is MessageContextMenuCommandLike;
-  isMessageComponent: () => this is MessageComponentInteractionLike;
-  isButton: () => this is ButtonInteractionLike;
-  isSelectMenu: () => this is SelectMenuInteractionLike;
-  isAnySelectMenu: () => this is SelectMenuInteractionLike;
-  isStringSelectMenu: () => this is StringSelectMenuInteractionLike;
-  isUserSelectMenu: () => this is UserSelectMenuInteractionLike;
-  isRoleSelectMenu: () => this is RoleSelectMenuInteractionLike;
-  isMentionableSelectMenu: () => this is MentionableSelectMenuInteractionLike;
-  isChannelSelectMenu: () => this is ChannelSelectMenuInteractionLike;
-  isModalSubmit: () => this is ModalSubmitInteractionLike;
-  reply: (payload: string | InteractionReplyOptions) => Promise<InteractionCallbackResponse>;
-  deferReply: (options?: InteractionDeferReplyOptions) => Promise<InteractionCallbackResponse>;
-  deferUpdate: () => Promise<InteractionCallbackResponse>;
-  update: (payload: string | InteractionUpdateOptions) => Promise<InteractionCallbackResponse>;
-  respond: (choices: readonly ApplicationCommandOptionChoiceData[]) => Promise<InteractionCallbackResponse>;
-  showModal: (payload: UnknownRecord) => Promise<InteractionCallbackResponse>;
-  editReply: (payload: string | InteractionReplyOptions) => Promise<InteractionCallbackResponse>;
-  followUp: (payload: string | InteractionReplyOptions) => Promise<InteractionCallbackResponse>;
-  fetchReply: () => Promise<UnknownRecord>;
-  deleteReply: () => Promise<void>;
-  getResponse: () => InteractionCallbackResponse | null;
-}
-
-export interface CommandInteractionLike extends InteractionLike {
-  type: InteractionType.ApplicationCommand;
-}
-
-export interface AutocompleteInteractionLike extends InteractionLike {
-  type: InteractionType.ApplicationCommandAutocomplete;
-}
-
-export interface ChatInputCommandLike extends CommandInteractionLike {
-  data?: InteractionData & { type: ApplicationCommandType.ChatInput };
-}
-
-export interface ContextMenuCommandLike extends CommandInteractionLike {
-  data?: InteractionData & { type: ApplicationCommandType.Message | ApplicationCommandType.User };
-}
-
-export interface UserContextMenuCommandLike extends CommandInteractionLike {
-  data?: InteractionData & { type: ApplicationCommandType.User };
-}
-
-export interface MessageContextMenuCommandLike extends CommandInteractionLike {
-  data?: InteractionData & { type: ApplicationCommandType.Message };
-}
-
-export interface MessageComponentInteractionLike extends InteractionLike {
-  type: InteractionType.MessageComponent;
-}
-
-export interface ButtonInteractionLike extends MessageComponentInteractionLike {
-  data?: InteractionData & { component_type: ComponentType.Button };
-}
-
-export interface SelectMenuInteractionLike extends MessageComponentInteractionLike {
-  data?: InteractionData & {
-    component_type: SelectComponentType;
-  };
-}
-
-export interface StringSelectMenuInteractionLike extends MessageComponentInteractionLike {
-  data?: InteractionData & { component_type: ComponentType.StringSelect };
-}
-
-export interface UserSelectMenuInteractionLike extends MessageComponentInteractionLike {
-  data?: InteractionData & { component_type: ComponentType.UserSelect };
-}
-
-export interface RoleSelectMenuInteractionLike extends MessageComponentInteractionLike {
-  data?: InteractionData & { component_type: ComponentType.RoleSelect };
-}
-
-export interface MentionableSelectMenuInteractionLike extends MessageComponentInteractionLike {
-  data?: InteractionData & { component_type: ComponentType.MentionableSelect };
-}
-
-export interface ChannelSelectMenuInteractionLike extends MessageComponentInteractionLike {
-  data?: InteractionData & { component_type: ComponentType.ChannelSelect };
-}
-
-export interface ModalSubmitInteractionLike extends InteractionLike {
-  type: InteractionType.ModalSubmit;
-}
+import type {
+    AutocompleteInteractionLike,
+    ButtonInteractionLike,
+    ChannelSelectMenuInteractionLike,
+    ChatInputCommandLike,
+    CommandInteractionLike,
+    ContextMenuCommandLike,
+    InteractionCallbackResponse,
+    InteractionLike,
+    MentionableSelectMenuInteractionLike,
+    MessageComponentInteractionLike,
+    MessageContextMenuCommandLike,
+    ModalSubmitInteractionLike,
+    RawInteraction,
+    RoleSelectMenuInteractionLike,
+    SelectComponentType,
+    SelectMenuInteractionLike,
+    StringSelectMenuInteractionLike,
+    UnknownRecord,
+    UserContextMenuCommandLike,
+    UserSelectMenuInteractionLike
+} from '../types/interaction';
 
 function toDataPayload(payload: string | UnknownRecord): UnknownRecord {
   if (typeof payload === 'string') {
@@ -169,6 +50,33 @@ function isSelectComponentType(componentType: unknown): componentType is SelectC
   );
 }
 
+function parseSnowflakeTimestamp(interactionId: string | undefined): number | null {
+  if (!interactionId) {
+    return null;
+  }
+
+  try {
+    const discordEpoch = 1420070400000n;
+    const timestamp = (BigInt(interactionId) >> 22n) + discordEpoch;
+    return Number(timestamp);
+  } catch {
+    return null;
+  }
+}
+
+function getUserId(raw: RawInteraction): string | null {
+  const memberUser = raw.member?.user;
+  if (memberUser && typeof memberUser === 'object' && 'id' in memberUser && typeof memberUser.id === 'string') {
+    return memberUser.id;
+  }
+
+  if (raw.user && typeof raw.user === 'object' && 'id' in raw.user && typeof raw.user.id === 'string') {
+    return raw.user.id;
+  }
+
+  return null;
+}
+
 export function createInteractionFacade(raw: RawInteraction): InteractionLike {
   let response: InteractionCallbackResponse | null = null;
 
@@ -177,6 +85,16 @@ export function createInteractionFacade(raw: RawInteraction): InteractionLike {
     guildId: raw.guild_id ?? null,
     channelId: raw.channel_id ?? null,
     applicationId: raw.application_id ?? null,
+    userId: getUserId(raw),
+    commandName: typeof raw.data?.name === 'string' ? raw.data.name : null,
+    customId: typeof raw.data?.custom_id === 'string' ? raw.data.custom_id : null,
+    componentType: typeof raw.data?.component_type === 'number' ? raw.data.component_type : null,
+    values: Array.isArray(raw.data?.values) ? raw.data.values.filter((value): value is string => typeof value === 'string') : [],
+    createdTimestamp: parseSnowflakeTimestamp(raw.id),
+    createdAt: (() => {
+      const timestamp = parseSnowflakeTimestamp(raw.id);
+      return timestamp === null ? null : new Date(timestamp);
+    })(),
     replied: false,
     deferred: false,
     ephemeral: false,

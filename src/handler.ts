@@ -1,13 +1,39 @@
 import { EventEmitter } from 'events';
 import type { Context } from 'hono';
-import type { InteractionLike } from './utils/interactionFacade';
+import type {
+    AutocompleteInteractionLike,
+    ButtonInteractionLike,
+    CommandInteractionLike,
+    InteractionEventListener,
+    InteractionEventMap,
+    InteractionEventName,
+    InteractionLike,
+    MessageComponentInteractionLike,
+    ModalSubmitInteractionLike,
+    SelectMenuInteractionLike
+} from './types/interaction';
 
 export class InteractionHandler extends EventEmitter {
     constructor() {
         super();
     }
 
-    private async emitAsync(event: string, interaction: InteractionLike) {
+    override on<E extends InteractionEventName>(event: E, listener: InteractionEventListener<E>): this;
+    override on(event: string | symbol, listener: (...args: any[]) => void): this {
+        return super.on(event, listener);
+    }
+
+    override once<E extends InteractionEventName>(event: E, listener: InteractionEventListener<E>): this;
+    override once(event: string | symbol, listener: (...args: any[]) => void): this {
+        return super.once(event, listener);
+    }
+
+    override off<E extends InteractionEventName>(event: E, listener: InteractionEventListener<E>): this;
+    override off(event: string | symbol, listener: (...args: any[]) => void): this {
+        return super.off(event, listener);
+    }
+
+    private async emitAsync<E extends InteractionEventName>(event: E, interaction: InteractionEventMap[E]) {
         const listeners = this.listeners(event);
         await Promise.allSettled(listeners.map((listener) => Promise.resolve(listener(interaction))));
     }
@@ -16,24 +42,28 @@ export class InteractionHandler extends EventEmitter {
         await this.emitAsync('interaction', interaction);
     }
 
-    async emitAutocomplete(interaction: InteractionLike) {
+    async emitAutocomplete(interaction: AutocompleteInteractionLike) {
         await this.emitAsync('autocomplete', interaction);
     }
 
-    async emitButton(interaction: InteractionLike) {
+    async emitButton(interaction: ButtonInteractionLike) {
         await this.emitAsync('button', interaction);
     }
 
-    async emitMessageComponent(interaction: InteractionLike) {
+    async emitMessageComponent(interaction: MessageComponentInteractionLike) {
         await this.emitAsync('messageComponent', interaction);
     }
 
-    async emitSlashCommand(interaction: InteractionLike) {
+    async emitSlashCommand(interaction: CommandInteractionLike) {
         await this.emitAsync('slashCommand', interaction);
     }
 
-    async emitModalSubmit(interaction: InteractionLike) {
+    async emitModalSubmit(interaction: ModalSubmitInteractionLike) {
         await this.emitAsync('modalSubmit', interaction);
+    }
+
+    async emitSelectMenu(interaction: SelectMenuInteractionLike) {
+        await this.emitAsync('selectMenu', interaction);
     }
 
     reply(c: Context, response: Record<string, unknown>) {
