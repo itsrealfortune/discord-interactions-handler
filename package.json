@@ -1,5 +1,5 @@
 {
-  "name": "discord-interactions-handler",
+  "name": "hono-discord-interactions",
   "version": "1.0.0",
   "license": "MIT",
   "description": "A Discord interactions handler built with Bun and Hono. Useful for handling slash commands, buttons, and other interactions in a performant way for Interactions Endpoints URL bots.",

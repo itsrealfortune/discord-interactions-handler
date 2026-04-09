@@ -1,4 +1,4 @@
-# discord-interactions-handler
+# @itsrealfortune/hono-discord-interactions
 
 > [!WARNING]
 > This package is currently under active development.
@@ -47,7 +47,7 @@ This package is designed for fetch-compatible runtimes.
 Cloudflare `wrangler.toml` example:
 
 ```toml
-name = "discord-interactions-handler"
+name = "hono-discord-interactions"
 main = "src/worker.ts"
 compatibility_date = "2025-01-01"
 compatibility_flags = ["nodejs_compat"]
@@ -56,7 +56,7 @@ compatibility_flags = ["nodejs_compat"]
 ## Installation
 
 ```bash
-npm i discord-interactions-handler
+npm i hono-discord-interactions
 ```
 
 ## Configuration
@@ -75,7 +75,7 @@ You can provide it from:
 Default import:
 
 ```ts
-import interactionsApi from "discord-interactions-handler";
+import interactionsApi from "hono-discord-interactions";
 
 const { app, client } = interactionsApi;
 ```
@@ -86,7 +86,7 @@ const { app, client } = interactionsApi;
 ## Quick Start
 
 ```ts
-import interactionsApi from "discord-interactions-handler";
+import interactionsApi from "hono-discord-interactions";
 
 interactionsApi.client.on("slashCommand", async (interaction) => {
   if (!interaction.isChatInputCommand()) {
@@ -114,7 +114,7 @@ https://your-domain.tld/api/interactions
 ### Bun
 
 ```ts
-import interactionsApi from "discord-interactions-handler";
+import interactionsApi from "hono-discord-interactions";
 
 Bun.serve({
   port: Number(process.env.PORT ?? 3000),
@@ -125,7 +125,7 @@ Bun.serve({
 ### Node.js
 
 ```ts
-import interactionsApi from "discord-interactions-handler";
+import interactionsApi from "hono-discord-interactions";
 
 export default interactionsApi.app;
 ```
@@ -133,7 +133,7 @@ export default interactionsApi.app;
 ### Vercel Edge Function
 
 ```ts
-import interactionsApi from "discord-interactions-handler";
+import interactionsApi from "hono-discord-interactions";
 
 export const runtime = "edge";
 export default interactionsApi.app.fetch;
@@ -142,7 +142,7 @@ export default interactionsApi.app.fetch;
 ### Vercel Node Function
 
 ```ts
-import interactionsApi from "discord-interactions-handler";
+import interactionsApi from "hono-discord-interactions";
 
 export const runtime = "nodejs";
 export default interactionsApi.app.fetch;
@@ -151,7 +151,7 @@ export default interactionsApi.app.fetch;
 ### Cloudflare Worker
 
 ```ts
-import interactionsApi from "discord-interactions-handler";
+import interactionsApi from "hono-discord-interactions";
 
 export default {
   fetch: interactionsApi.app.fetch,
@@ -163,7 +163,7 @@ export default {
 `InteractionHandler` exposes typed `on`, `once`, and `off` methods.
 
 ```ts
-import interactionsApi from "discord-interactions-handler";
+import interactionsApi from "hono-discord-interactions";
 
 interactionsApi.client.on("button", async (interaction) => {
   if (interaction.customId === "approve") {
