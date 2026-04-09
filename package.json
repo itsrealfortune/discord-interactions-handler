@@ -1,5 +1,8 @@
 {
   "name": "discord-interactions-handler",
+  "version": "1.0.0",
+  "description": "A Discord interactions handler built with Bun and Hono. Useful for handling slash commands, buttons, and other interactions in a performant way for Interactions Endpoints URL bots.",
+  "main": "src/index.ts",
   "module": "src/index.ts",
   "type": "module",
   "scripts": {

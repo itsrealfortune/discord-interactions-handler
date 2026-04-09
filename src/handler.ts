@@ -1,26 +1,31 @@
-import type { Interaction } from 'discord.js';
 import { EventEmitter } from 'events';
 import type { Context } from 'hono';
+import type { InteractionLike } from './utils/interactionFacade';
 
 export class InteractionHandler extends EventEmitter {
     constructor() {
         super();
     }
 
-    emitInteraction(interaction: Interaction) {
-        this.emit('interaction', interaction);
+    private async emitAsync(event: string, interaction: InteractionLike) {
+        const listeners = this.listeners(event);
+        await Promise.allSettled(listeners.map((listener) => Promise.resolve(listener(interaction))));
     }
 
-    emitAutocomplete(interaction: Interaction) {
-        this.emit('autocomplete', interaction);
+    async emitInteraction(interaction: InteractionLike) {
+        await this.emitAsync('interaction', interaction);
     }
 
-    emitButton(interaction: Interaction) {
-        this.emit('button', interaction);
+    async emitAutocomplete(interaction: InteractionLike) {
+        await this.emitAsync('autocomplete', interaction);
     }
 
-    emitSlashCommand(interaction: Interaction) {
-        this.emit('slashCommand', interaction);
+    async emitButton(interaction: InteractionLike) {
+        await this.emitAsync('button', interaction);
+    }
+
+    async emitSlashCommand(interaction: InteractionLike) {
+        await this.emitAsync('slashCommand', interaction);
     }
 
     reply(c: Context, response: Record<string, unknown>) {
