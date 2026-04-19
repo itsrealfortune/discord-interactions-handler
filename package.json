@@ -3,6 +3,10 @@
 	"version": "1.0.1",
 	"license": "MIT",
 	"description": "A Discord interactions handler built with Bun and Hono. Useful for handling slash commands, buttons, and other interactions in a performant way for Interactions Endpoints URL bots.",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/itsrealfortune/discord-interactions-handler"
+	},
 	"main": "dist/index.js",
 	"module": "dist/index.js",
 	"types": "dist/index.d.ts",
