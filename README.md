@@ -1,4 +1,4 @@
-# @itsrealfortune/hono-discord-interactions
+# hono-discord-interactions
 
 > [!WARNING]
 > This package is currently under active development.
@@ -222,12 +222,16 @@ src/
   utils/
     discordUtils.ts
     interactionFacade.ts
+    supabaseClient.ts
 ```
 
 ## Scripts
 
 ```bash
 # typecheck
+npm run typecheck
+
+# static checks (Biome)
 npm run check
 
 # lint
