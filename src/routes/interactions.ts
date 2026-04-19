@@ -5,6 +5,22 @@ import type { RawInteraction } from "../types/interaction";
 import { verifySignature } from "../utils/discordUtils";
 import { createInteractionFacade } from "../utils/interactionFacade";
 
+/**
+ * HTTP entry point for Discord interactions.
+ *
+ * Main flow:
+ * 1) ED25519 signature verification
+ * 2) JSON payload parsing and validation
+ * 3) typed interaction facade creation
+ * 4) event emission through InteractionHandler
+ * 5) Discord response return (immediate or deferred)
+ *
+ * @param {Context} c Hono request context.
+ * @param {InteractionHandler} emitter Application event bus for interactions.
+ * @returns {Promise<Response>} JSON HTTP response compliant with Discord protocol.
+ * @example
+ * app.post("/api/interactions", (c) => handleInteractions(c, client));
+ */
 export async function handleInteractions(
 	c: Context,
 	emitter: InteractionHandler,

@@ -26,7 +26,18 @@ import type {
 	UserSelectMenuInteractionLike,
 } from "../types/interaction";
 
-/** Normalize message payload inputs into Discord callback data shape. */
+/**
+ * Normalizes a response payload into Discord callback data format.
+ *
+ * @param {string | UnknownRecord} payload Raw message string or pre-structured object.
+ * @returns {UnknownRecord} Object compatible with Discord callback data.
+ * @example
+ * toDataPayload("Pong");
+ * // { content: "Pong" }
+ * @example
+ * toDataPayload({ content: "Hello", flags: 64 });
+ * // { content: "Hello", flags: 64 }
+ */
 function toDataPayload(payload: string | UnknownRecord): UnknownRecord {
 	if (typeof payload === "string") {
 		return { content: payload };
@@ -34,7 +45,15 @@ function toDataPayload(payload: string | UnknownRecord): UnknownRecord {
 	return payload;
 }
 
-/** Check whether response flags contain the ephemeral bit (64). */
+/**
+ * Checks whether Discord flags indicate an ephemeral response.
+ *
+ * @param {unknown} flags Value from an interaction response flags field.
+ * @returns {boolean} True when bit 64 is present.
+ * @example
+ * isEphemeralFromFlags(64);
+ * // true
+ */
 function isEphemeralFromFlags(flags: unknown): boolean {
 	if (typeof flags === "number") {
 		return (flags & 64) === 64;
@@ -42,7 +61,16 @@ function isEphemeralFromFlags(flags: unknown): boolean {
 	return false;
 }
 
-/** Runtime guard for supported select menu component types. */
+/**
+ * Runtime type guard for supported select menu component types.
+ *
+ * @param {unknown} componentType Raw value from interaction.data.component_type.
+ * @returns {componentType is SelectComponentType} True when the value is a valid select type.
+ * @example
+ * if (isSelectComponentType(raw.data?.component_type)) {
+ *   // TypeScript now knows component_type is a SelectComponentType
+ * }
+ */
 function isSelectComponentType(
 	componentType: unknown,
 ): componentType is SelectComponentType {
@@ -59,6 +87,12 @@ function isSelectComponentType(
  * Decode the timestamp from a Discord snowflake id.
  *
  * Returns null when the id is absent or malformed.
+ *
+ * @param {string | undefined} interactionId Discord interaction snowflake id.
+ * @returns {number | null} Unix timestamp in milliseconds, or null when invalid.
+ * @example
+ * parseSnowflakeTimestamp("123456789012345678");
+ * // 1700000000000 (example)
  */
 function parseSnowflakeTimestamp(
 	interactionId: string | undefined,
@@ -76,7 +110,21 @@ function parseSnowflakeTimestamp(
 	}
 }
 
-/** Resolve the triggering user id from either guild member.user or user. */
+/**
+ * Extracts the triggering user id from a raw interaction payload.
+ *
+ * Priority:
+ * 1) raw.member.user.id (guild interactions)
+ * 2) raw.user.id (non-guild interactions)
+ *
+ * @param {RawInteraction} raw Raw payload received from the Discord webhook.
+ * @returns {string | null} User id, or null when missing.
+ * @example
+ * const userId = getUserId(raw);
+ * if (!userId) {
+ *   console.warn("Unable to resolve user id");
+ * }
+ */
 function getUserId(raw: RawInteraction): string | null {
 	const memberUser = raw.member?.user;
 	if (
@@ -105,6 +153,14 @@ function getUserId(raw: RawInteraction): string | null {
  *
  * The returned object exposes commonly used type guards and response helpers
  * so listener code can remain close to discord.js patterns.
+ *
+ * @param {RawInteraction} raw Raw interaction payload sent by Discord.
+ * @returns {InteractionLike} Typed runtime facade with type guards and response helpers.
+ * @example
+ * const interaction = createInteractionFacade(raw);
+ * if (interaction.isCommand()) {
+ *   await interaction.reply({ content: "Command received" });
+ * }
  */
 export function createInteractionFacade(raw: RawInteraction): InteractionLike {
 	let response: InteractionCallbackResponse | null = null;

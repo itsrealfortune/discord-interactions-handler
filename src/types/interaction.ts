@@ -1,12 +1,19 @@
 import type {
+	ApplicationCommandOptionChoiceData,
 	ApplicationCommandType,
 	ComponentType,
-	InteractionType,
-	ApplicationCommandOptionChoiceData,
 	InteractionDeferReplyOptions,
 	InteractionReplyOptions,
+	InteractionType,
 	InteractionUpdateOptions,
 } from "discord.js";
+
+/**
+ * Runtime type contracts for Discord interactions handled through webhooks.
+ *
+ * @example
+ * import type { InteractionLike, InteractionEventMap } from "./types/interaction";
+ */
 
 /** Generic JSON-like object used for Discord payload fragments. */
 export type UnknownRecord = Record<string, unknown>;
@@ -16,6 +23,12 @@ export type UnknownRecord = Record<string, unknown>;
  *
  * Only commonly used fields are explicitly modeled here.
  * Unknown fields are preserved through the index signature.
+ *
+ * @example
+ * const data: InteractionData = {
+ *   name: "ping",
+ *   options: [{ name: "target", value: "world" }],
+ * };
  */
 export type InteractionData = {
 	type?: number;
@@ -27,7 +40,12 @@ export type InteractionData = {
 	[key: string]: unknown;
 };
 
-/** Raw Discord interaction payload received on the HTTP endpoint. */
+/**
+ * Raw Discord payload received on the HTTP endpoint.
+ *
+ * @example
+ * const raw: RawInteraction = { type: 2, id: "123", token: "abc" };
+ */
 export type RawInteraction = {
 	id?: string;
 	token?: string;
@@ -43,13 +61,26 @@ export type RawInteraction = {
 	[key: string]: unknown;
 };
 
-/** Discord callback response shape returned to the interaction endpoint. */
+/**
+ * Callback response shape expected by Discord.
+ *
+ * @example
+ * const response: InteractionCallbackResponse = {
+ *   type: 4,
+ *   data: { content: "Hello" },
+ * };
+ */
 export type InteractionCallbackResponse = {
 	type: number;
 	data?: UnknownRecord;
 };
 
-/** Select menu component types supported by message component interactions. */
+/**
+ * Supported select menu component types.
+ *
+ * @example
+ * const selectType: SelectComponentType = ComponentType.StringSelect;
+ */
 export type SelectComponentType =
 	| ComponentType.StringSelect
 	| ComponentType.UserSelect
@@ -266,9 +297,26 @@ export type InteractionEventMap = {
 	selectMenu: SelectMenuInteractionLike;
 };
 
-/** Event names supported by InteractionHandler listeners. */
+/**
+ * Event names accepted by InteractionHandler.
+ *
+ * @example
+ * const eventName: InteractionEventName = "slashCommand";
+ */
 export type InteractionEventName = keyof InteractionEventMap;
-/** Strongly typed listener signature for a given interaction event. */
+/**
+ * Strongly typed listener signature for a given interaction event.
+ *
+ * @template {InteractionEventName} E Event name.
+ * @param {InteractionEventMap[E]} interaction Typed interaction associated with the event.
+ * @returns {void | Promise<void>} Nothing or a promise resolved when handling completes.
+ * @example
+ * const onAnyInteraction: InteractionEventListener<"interaction"> = async (interaction) => {
+ *   if (interaction.isRepliable()) {
+ *     await interaction.deferReply();
+ *   }
+ * };
+ */
 export type InteractionEventListener<E extends InteractionEventName> = (
 	interaction: InteractionEventMap[E],
 ) => void | Promise<void>;
