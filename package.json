@@ -34,6 +34,7 @@
 		"publish-package": "bash ./scripts/publish-package.sh"
 	},
 	"devDependencies": {
+		"@biomejs/biome": "^2.4.12",
 		"@eslint/js": "^10.0.1",
 		"@types/bun": "latest",
 		"eslint": "^10.2.0",
