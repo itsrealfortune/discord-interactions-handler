@@ -1,6 +1,6 @@
 {
   "name": "hono-discord-interactions",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "license": "MIT",
   "description": "A Discord interactions handler built with Bun and Hono. Useful for handling slash commands, buttons, and other interactions in a performant way for Interactions Endpoints URL bots.",
   "main": "dist/index.js",
@@ -20,12 +20,18 @@
   ],
   "type": "module",
   "scripts": {
-    "build": "npx tsup src/index.ts --format esm --dts --clean",
     "prepack": "npm run build",
-    "check": "npx tsc --noEmit",
-    "test": "bun test tests",
-    "format": "npx prettier --write .",
-    "lint": "npx eslint . --ext .ts"
+    "build:watch": "tsc --watch",
+    "typecheck": "tsc --noEmit",
+    "example": "ts-node --esm examples/example.ts",
+    "format": "bunx --bun @biomejs/biome format --write ./src",
+    "check": "bunx --bun @biomejs/biome check ./src",
+    "lint": "bunx --bun @biomejs/biome lint ./src",
+    "lint:write": "bunx --bun @biomejs/biome lint --write ./src",
+    "test": "bunx --bun @biomejs/biome test ./src",
+    "build": "tsc --project tsconfig.json",
+    "deploy:npm": "npm publish --access public",
+    "publish-package": "bash ./scripts/publish-package.sh"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
