@@ -1,5 +1,5 @@
 import { InteractionType } from "discord.js";
-import { type Context } from "hono";
+import type { Context } from "hono";
 import type { InteractionHandler } from "../handler";
 import type { RawInteraction } from "../types/interaction";
 import { verifySignature } from "../utils/discordUtils";

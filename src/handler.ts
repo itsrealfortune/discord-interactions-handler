@@ -1,5 +1,5 @@
-import { EventEmitter } from "events";
 import type { Context } from "hono";
+import { EventEmitter } from "node:events";
 import type {
 	AutocompleteInteractionLike,
 	ButtonInteractionLike,
@@ -20,10 +20,6 @@ import type {
  * strongly typed interaction objects in listeners.
  */
 export class InteractionHandler extends EventEmitter {
-	constructor() {
-		super();
-	}
-
 	/** Register a typed listener for a known interaction event. */
 	override on<E extends InteractionEventName>(
 		event: E,

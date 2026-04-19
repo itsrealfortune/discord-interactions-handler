@@ -35,14 +35,14 @@ export async function verifySignature(
 ): Promise<boolean> {
 	const signature = c.req.header("x-signature-ed25519");
 	const timestamp = c.req.header("x-signature-timestamp");
-	const PUBLIC_KEY = resolvePublicKey(c);
+	const PublicKey = resolvePublicKey(c);
 
-	if (!signature || !timestamp || !PUBLIC_KEY) {
+	if (!signature || !timestamp || !PublicKey) {
 		console.warn("Missing required headers or public key");
 		return false;
 	}
 
-	const isValid = await verifyKey(body, signature, timestamp, PUBLIC_KEY);
+	const isValid = await verifyKey(body, signature, timestamp, PublicKey);
 	if (!isValid) console.warn("Invalid request signature");
 
 	return isValid;

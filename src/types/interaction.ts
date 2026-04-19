@@ -1,11 +1,11 @@
-import {
+import type {
 	ApplicationCommandType,
 	ComponentType,
 	InteractionType,
-	type ApplicationCommandOptionChoiceData,
-	type InteractionDeferReplyOptions,
-	type InteractionReplyOptions,
-	type InteractionUpdateOptions,
+	ApplicationCommandOptionChoiceData,
+	InteractionDeferReplyOptions,
+	InteractionReplyOptions,
+	InteractionUpdateOptions,
 } from "discord.js";
 
 /** Generic JSON-like object used for Discord payload fragments. */

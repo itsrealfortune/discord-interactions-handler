@@ -1,4 +1,4 @@
-import { createClient, SupabaseClient } from "@supabase/supabase-js";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 let supabaseAdminClient: SupabaseClient | null = null;
 
 function isTruthyEnv(value: string | undefined): boolean {
@@ -59,8 +59,9 @@ function buildSupabaseFetch(): typeof fetch {
 	const timeoutMs = parseTimeoutMs(process.env.SUPABASE_HTTP_TIMEOUT_MS);
 	const logSlowThresholdMs =
 		parseTimeoutMs(process.env.SUPABASE_HTTP_SLOW_MS) || 120;
+	const nativeFetch = fetch;
 
-	return async (input, init) => {
+	const wrappedFetch: typeof fetch = async (input, init) => {
 		const startedAt = enableHttpPerf ? nowMs() : 0;
 		const baseInit = init || {};
 		const nextInit = { ...baseInit } as RequestInit;
@@ -113,6 +114,10 @@ function buildSupabaseFetch(): typeof fetch {
 			}
 		}
 	};
+
+	wrappedFetch.preconnect = nativeFetch.preconnect.bind(nativeFetch);
+
+	return wrappedFetch;
 }
 
 function normalizeSecret(raw: string | undefined): string {
