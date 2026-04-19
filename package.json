@@ -1,54 +1,54 @@
 {
-  "name": "hono-discord-interactions",
-  "version": "1.0.1",
-  "license": "MIT",
-  "description": "A Discord interactions handler built with Bun and Hono. Useful for handling slash commands, buttons, and other interactions in a performant way for Interactions Endpoints URL bots.",
-  "main": "dist/index.js",
-  "module": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "default": "./dist/index.js"
-    }
-  },
-  "files": [
-    "dist",
-    "README.md",
-    "LICENSE"
-  ],
-  "type": "module",
-  "scripts": {
-    "prepack": "npm run build",
-    "build:watch": "tsc --watch",
-    "typecheck": "tsc --noEmit",
-    "example": "ts-node --esm examples/example.ts",
-    "format": "bunx --bun @biomejs/biome format --write ./src",
-    "check": "bunx --bun @biomejs/biome check ./src",
-    "lint": "bunx --bun @biomejs/biome lint ./src",
-    "lint:write": "bunx --bun @biomejs/biome lint --write ./src",
-    "test": "bunx --bun @biomejs/biome test ./src",
-    "build": "tsc --project tsconfig.json",
-    "deploy:npm": "npm publish --access public",
-    "publish-package": "bash ./scripts/publish-package.sh"
-  },
-  "devDependencies": {
-    "@eslint/js": "^10.0.1",
-    "@types/bun": "latest",
-    "eslint": "^10.2.0",
-    "globals": "^17.4.0",
-    "jiti": "^2.6.1",
-    "tsup": "^8.5.1",
-    "typescript-eslint": "^8.58.1"
-  },
-  "peerDependencies": {
-    "typescript": "^5"
-  },
-  "dependencies": {
-    "@supabase/supabase-js": "^2.102.1",
-    "discord-interactions": "^4.4.0",
-    "discord.js": "^14.26.2",
-    "hono": "^4.12.12"
-  }
+	"name": "hono-discord-interactions",
+	"version": "1.0.1",
+	"license": "MIT",
+	"description": "A Discord interactions handler built with Bun and Hono. Useful for handling slash commands, buttons, and other interactions in a performant way for Interactions Endpoints URL bots.",
+	"main": "dist/index.js",
+	"module": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.js",
+			"default": "./dist/index.js"
+		}
+	},
+	"files": [
+		"dist",
+		"README.md",
+		"LICENSE"
+	],
+	"type": "module",
+	"scripts": {
+		"prepack": "npm run build",
+		"build:watch": "tsc --watch",
+		"typecheck": "tsc --noEmit",
+		"example": "ts-node --esm examples/example.ts",
+		"format": "bunx --bun @biomejs/biome format --write ./src",
+		"check": "bunx --bun @biomejs/biome check ./src",
+		"lint": "bunx --bun @biomejs/biome lint ./src",
+		"lint:write": "bunx --bun @biomejs/biome lint --write ./src",
+		"test": "bunx --bun @biomejs/biome test ./src",
+		"build": "tsc --project tsconfig.json",
+		"deploy:npm": "npm publish --access public",
+		"publish-package": "bash ./scripts/publish-package.sh"
+	},
+	"devDependencies": {
+		"@eslint/js": "^10.0.1",
+		"@types/bun": "latest",
+		"eslint": "^10.2.0",
+		"globals": "^17.4.0",
+		"jiti": "^2.6.1",
+		"tsup": "^8.5.1",
+		"typescript-eslint": "^8.58.1"
+	},
+	"peerDependencies": {
+		"typescript": "^5"
+	},
+	"dependencies": {
+		"@supabase/supabase-js": "^2.102.1",
+		"discord-interactions": "^4.4.0",
+		"discord.js": "^14.26.2",
+		"hono": "^4.12.12"
+	}
 }
